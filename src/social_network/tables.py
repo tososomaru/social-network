@@ -8,9 +8,20 @@ Base = declarative_base()
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    username = sa.Column(sa.CHAR(100))
-    password = sa.Column(sa.CHAR(50))
-    date_register = sa.Column(sa.DATE, default=datetime.date.today())
+    email = sa.Column(sa.Text(100), unique=True)
+    username = sa.Column(sa.Text(100), unique=True)
+    password_hash = sa.Column(sa.Text)
+    date_register = sa.Column(sa.Date, default=datetime.date.today())
+    is_superuser = sa.Column(sa.Boolean, default=False)
+    is_active = sa.Column(sa.Boolean, default=False)
+
+
+class Post(Base):
+    __tablename__ = 'posts'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    text = sa.Column(sa.Text)
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'))
