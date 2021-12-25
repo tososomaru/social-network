@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from .settings import settings
-from .tables import Base
+from src.app.core.settings import settings
+from src.app.db.base import Base
 
 engine = create_engine(
-    settings.database_url,
+    settings.SQLITE3_URL,
     connect_args={'check_same_thread': False}
 )
 

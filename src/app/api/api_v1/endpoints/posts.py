@@ -3,23 +3,19 @@ from fastapi import Depends, Response, status
 
 from typing import List
 
-from ..models.auth import User
-from ..models.posts import Post, PostCreate, PostUpdate
-from ..services.auth import get_current_user
-from ..services.posts import PostService
+from src.app.schemas.auth import User
+from src.app.schemas.posts import Post, PostCreate, PostUpdate
+from src.app.services.auth import get_current_user
+from src.app.services.posts import PostService
 
-router = APIRouter(
-    prefix='/posts',
-    tags=['posts']
-)
+router = APIRouter()
 
 
 @router.get('/', response_model=List[Post])
 def get_posts(
-        user: User = Depends(get_current_user),
         service: PostService = Depends()
 ):
-    return service.get_posts(user_id=user.id)
+    return service.get_posts()
 
 
 @router.get('/{post_id}', response_model=Post)

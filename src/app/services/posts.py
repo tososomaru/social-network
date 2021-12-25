@@ -3,9 +3,9 @@ from typing import List
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from ..database import get_session
-from ..models.posts import PostCreate, PostUpdate
-from ..tables import Post
+from src.app.db.session import get_session
+from ..schemas.posts import PostCreate, PostUpdate
+from ..models.post import Post
 
 
 class PostService:
@@ -26,11 +26,10 @@ class PostService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return post
 
-    def get_posts(self, user_id: int) -> List[Post]:
+    def get_posts(self) -> List[Post]:
         return (
             self.session
             .query(Post)
-            .filter(Post.user_id == user_id)
             .order_by(Post.id.asc())
             .all()
         )

@@ -1,18 +1,8 @@
 from fastapi import FastAPI
 
-from src.app.api import docs
-from src.app.api.api_v1.api import api_router
+from .api.api_v1.api import api_router
+from .api import docs
 from src.app.core.settings import settings
-from src.app.db.init_db import init_db
-from src.app.db.session import Session
-
-
-def init() -> None:
-    db = Session()
-    init_db(db)
-
-
-init()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

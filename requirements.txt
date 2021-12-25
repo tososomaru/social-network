@@ -6,3 +6,5 @@ sqlalchemy==1.4.29
 python-jose==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.5
+requests==2.26.0
+email-validator==1.1.3
