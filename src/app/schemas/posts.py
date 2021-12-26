@@ -1,8 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PostBase(BaseModel):
-    text: str
+    text: str = Field(
+        ...,
+        metadata=dict(title='Текст поста')
+    )
 
     class Config:
         schema_extra = {

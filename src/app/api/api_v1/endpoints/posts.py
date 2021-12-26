@@ -1,8 +1,6 @@
 from fastapi import APIRouter
 from fastapi import Depends, Response, status
 
-from typing import List
-
 from src.app.schemas.auth import User
 from src.app.schemas.posts import Post, PostCreate, PostUpdate
 from src.app.services.auth import get_current_user
