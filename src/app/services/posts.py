@@ -50,7 +50,7 @@ class PostService:
         self.session.commit()
         return post
 
-    def delete_post(self,user_id: int, post_id: int) -> None:
+    def delete_post(self, user_id: int, post_id: int) -> None:
         post = self._get(user_id, post_id)
         self.session.delete(post)
         self.session.commit()

@@ -8,14 +8,18 @@ from src.app.schemas.posts import Post, PostCreate, PostUpdate
 from src.app.services.auth import get_current_user
 from src.app.services.posts import PostService
 
+from fastapi_pagination import paginate, Page, Params
+
+
 router = APIRouter()
 
 
-@router.get('/', response_model=List[Post])
+@router.get('/', response_model=Page[Post])
 def get_posts(
-        service: PostService = Depends()
+        service: PostService = Depends(),
+        params: Params = Depends()
 ):
-    return service.get_posts()
+    return paginate(service.get_posts(), params)
 
 
 @router.get('/{post_id}', response_model=Post)
