@@ -14,3 +14,5 @@ engine = create_engine(
 )
 
 
+def get_database():
+    return databases.Database(settings.SQLITE3_URL)

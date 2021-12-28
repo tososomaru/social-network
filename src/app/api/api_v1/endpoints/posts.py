@@ -1,8 +1,9 @@
-
+from databases import Database
 from fastapi import Depends, Response, status, HTTPException
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
+from src.app.db.base import get_database
 from src.app.schemas.user import User
 from src.app.schemas.posts import Post, PostCreate, PostUpdate
 from src.app.services import posts as service
@@ -17,17 +18,19 @@ router = APIRouter()
 
 @router.get('/', response_model=Page[Post])
 async def get_posts(
-        params: Params = Depends()
+        params: Params = Depends(),
+        db: Database = Depends(get_database)
 ):
-    return paginate(await service.get_posts(), params)
+    return paginate(await service.get_posts(db), params)
 
 
 @router.get('/{post_id}', response_model=Post)
 async def get_post(
         post_id: UUID4,
         user: User = Depends(current_active_user),
+        db: Database = Depends(get_database)
 ):
-    post = await service.get_post(user_id=user.id, post_id=post_id)
+    post = await service.get_post(user_id=user.id, post_id=post_id, db=db)
     print(post)
     if not post:
         raise HTTPException(
@@ -41,8 +44,9 @@ async def get_post(
 async def create_post(
         post_data: PostCreate,
         user: User = Depends(current_active_user),
+        db: Database = Depends(get_database)
 ):
-    post = await service.create_posts(user_id=user.id, post_data=post_data)
+    post = await service.create_posts(user_id=user.id, post_data=post_data, db=db)
     return post
 
 
@@ -51,14 +55,16 @@ async def update_post(
         post_id: UUID4,
         post_data: PostUpdate,
         user: User = Depends(current_active_user),
+        db: Database = Depends(get_database)
 ):
-    return await service.update_post(user_id=user.id, post_id=post_id, post_data=post_data)
+    return await service.update_post(user_id=user.id, post_id=post_id, post_data=post_data, db=db)
 
 
 @router.delete('/{post_id}')
 async def delete_post(
         post_id: UUID4,
         user: User = Depends(current_active_user),
+        db: Database = Depends(get_database)
 ):
     post = await service.get_post(user_id=user.id, post_id=post_id)
     if not post:
@@ -66,5 +72,5 @@ async def delete_post(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={'post_id': post_id}
         )
-    await service.delete_post(user_id=user.id, post_id=post_id)
+    await service.delete_post(user_id=user.id, post_id=post_id, db=db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
