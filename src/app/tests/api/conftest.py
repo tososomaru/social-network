@@ -1,59 +1,31 @@
 import pytest
+from databases import Database
+from fastapi_pagination.ext import databases
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy_utils import database_exists, drop_database, create_database
-from starlette.testclient import TestClient
+
 from src.app.app import app
-from src.app.db.base import Base
-from src.app.db.session import get_session
+from src.app.db.base import Base, get_database
+from httpx import AsyncClient
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.sqlite3"
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
+@pytest.fixture(name="database")
+def database_fixture():
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+    Base.metadata.create_all(bind=engine)
+    database = databases.Database(SQLALCHEMY_DATABASE_URL)
+    return database
 
 
-def get_test_db():
-    SessionLocal = sessionmaker(bind=engine)
-    test_db = SessionLocal()
+@pytest.fixture(name="client")
+def client_fixture(database: Database):
+    def get_db_override():
+        return database
 
-    try:
-        yield test_db
-    finally:
-        test_db.close()
-
-
-@pytest.fixture(scope="session", autouse=True)
-def create_test_database():
-    """
-    Create a clean database on every test case.
-    We use the `sqlalchemy_utils` package here for a few helpers in consistently
-    creating and dropping the database.
-    """
-    if database_exists(SQLALCHEMY_DATABASE_URL):
-        drop_database(SQLALCHEMY_DATABASE_URL)
-    create_database(SQLALCHEMY_DATABASE_URL)  # Create the test database.
-    Base.metadata.create_all(engine)  # Create the tables.
-    app.dependency_overrides[get_session] = get_test_db  # Mock the Database Dependency
-    yield  # Run the tests.
-    drop_database(SQLALCHEMY_DATABASE_URL)  # Drop the test database.
-
-
-@pytest.fixture
-def test_db_session():
-    """Returns an sqlalchemy session, and after the test tears down everything properly."""
-
-    SessionLocal = sessionmaker(bind=engine)
-
-    session: Session = SessionLocal()
-    yield session
-    # Drop all data after each test
-    for tbl in reversed(Base.metadata.sorted_tables):
-        engine.execute(tbl.delete())
-    # put back the connection to the connection pool
-    session.close()
-
-
-@pytest.fixture(scope="module")
-def client():
-    with TestClient(app) as c:
-        yield c
+    app.dependency_overrides[get_database] = get_db_override
+    client = AsyncClient(app=app, base_url='http://127.0.0.1:8000')
+    yield client
+    app.dependency_overrides.clear()
