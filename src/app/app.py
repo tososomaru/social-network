@@ -1,10 +1,5 @@
-import json
-
 from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
 from fastapi_pagination import add_pagination
-from pydantic import ValidationError
-from fastapi.responses import JSONResponse
 
 from .api.api_v1.api import api_router
 from .api import docs
@@ -16,18 +11,6 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
-
-
-@app.exception_handler(RequestValidationError)
-@app.exception_handler(ValidationError)
-async def validation_exception_handler(request, exc):
-    exc_json = json.loads(exc.json())
-
-    r = {
-        'messages': [error['msg'] for error in exc_json]
-    }
-
-    return JSONResponse(r, status_code=422)
 
 
 @app.on_event("startup")
