@@ -1,16 +1,15 @@
 import uuid
 
 from databases import Database
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from pydantic import UUID4
 from starlette import status
 
-from src.app.db.base import get_database
 from ..schemas.posts import PostCreate, PostUpdate, Post
 from ..models.post import posts
 
 
-async def get_post(user_id: UUID4, post_id: UUID4, db: Database = Depends(get_database)):
+async def get_post(user_id: UUID4, post_id: UUID4, db: Database):
     query = posts.select().where(posts.c.id == post_id and posts.c.user_id == user_id)
     return await db.fetch_one(query=query)
 
@@ -28,7 +27,7 @@ async def create_posts(user_id: UUID4, post_data: PostCreate, db: Database):
 
 
 async def update_post(user_id: UUID4, post_id: UUID4, post_data: PostUpdate, db: Database):
-    db_post = await get_post(user_id=user_id, post_id=post_id)
+    db_post = await get_post(user_id=user_id, post_id=post_id, db=db)
     if not db_post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -46,4 +45,3 @@ async def delete_post(user_id: UUID4, post_id: UUID4, db: Database):
     query = posts.delete().where(posts.c.user_id == user_id, posts.c.id == post_id)
     await db.execute(query=query)
     return None
-

@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter
 
-from src.app.schemas.user import UserDB
-from src.app.services.users import fastapi_users, jwt_authentication, current_active_user
+from app.app.schemas.user import UserDB
+from app.app.services.users import fastapi_users, jwt_authentication, current_active_user
 
 router = APIRouter()
 

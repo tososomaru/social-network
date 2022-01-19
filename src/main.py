@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi_pagination import add_pagination
 
-from .api.api_v1.api import api_router
-from .api import docs
-from src.app.core.settings import settings
-from .api.api_v1.endpoints import users
-from .db.base import database, Base, engine
+from app.app.api.api_v1.api import api_router
+from app.app.api import docs
+from app.app.core.settings import settings
+from app.app.api.api_v1.endpoints import users
+from app.app.db.base import database, Base, engine
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

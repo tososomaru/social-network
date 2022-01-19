@@ -1,18 +1,17 @@
-from datetime import datetime
 import sqlalchemy as sa
 from fastapi_users_db_sqlalchemy import GUID
 
-from src.app.db.base import Base
-
 from sqlalchemy_utils import force_instant_defaults
+
+from app.app.db.base import Base
+from app.app.models.base import BaseModelDB
 
 force_instant_defaults()
 
 
-class Post(Base):
+class Post(Base, BaseModelDB):
     __tablename__ = 'posts'
 
-    id = sa.Column(GUID, primary_key=True)
     text = sa.Column(sa.Text, nullable=True)
     user_id = sa.Column(GUID, sa.ForeignKey('user.id'))
     created_at = sa.Column(sa.DateTime, server_default=sa.func.now())

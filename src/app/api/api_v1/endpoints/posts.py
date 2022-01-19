@@ -3,13 +3,13 @@ from fastapi import Depends, Response, status, HTTPException
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
-from src.app.db.base import get_database
-from src.app.schemas.user import User
-from src.app.schemas.posts import Post, PostCreate, PostUpdate
-from src.app.services import posts as service
+from app.app.db.base import get_database
+from app.app.schemas.user import User
+from app.app.schemas.posts import Post, PostCreate, PostUpdate
+from app.app.services import posts as service
 
 from fastapi_pagination import paginate, Page, Params
-from src.app.services.users import current_active_user
+from app.app.services.users import current_active_user
 
 from fastapi import APIRouter
 
@@ -66,7 +66,7 @@ async def delete_post(
         user: User = Depends(current_active_user),
         db: Database = Depends(get_database)
 ):
-    post = await service.get_post(user_id=user.id, post_id=post_id)
+    post = await service.get_post(user_id=user.id, post_id=post_id, db=db)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

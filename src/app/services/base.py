@@ -4,14 +4,13 @@ from typing import Generic, Type, Optional, TypeVar, List
 from databases import Database
 from fastapi import HTTPException
 from pydantic import UUID4, BaseModel
-import sqlalchemy as sa
 from starlette import status
 
-SchemaType = TypeVar("SchemaType", bound=BaseModel)
+from app.app.db.base import Base
+
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
-DatabaseSchemaType = TypeVar("DatabaseSchemaType", bound=BaseModel)
-ModelType = TypeVar("ModelType", bound=sa.Table)
+ModelType = TypeVar("ModelType", bound=Base)
 
 ID = TypeVar('ID', bound=UUID4)
 
@@ -36,13 +35,21 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType], metacl
         query = self.model.insert(**create_schema, **kwargs)
         return await self.db.execute(query)
 
-    async def update(self, id: ID, update_schema: UpdateSchemaType, ) -> DatabaseSchemaType:
-        db_post = await self.get_by_id(id=id)
-        if not db_post:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-        post = DatabaseSchemaType.from_orm(db_post)
+    async def update(self, id: ID, update_schema: UpdateSchemaType, ) -> ModelType:
+        # db_post = await self.get_by_id(id=id)
+        # if not db_post:
+        #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        post = self.model.from_orm(db_post)
         for key, value in update_schema.dict(exclude_unset=True).items():
             setattr(post, key, value)
         query = self.model.update().where(self.model.c.id == id).values(**post.dict())
         await self.db.execute(query=query)
         return post
+
+    async def delete(self, id: ID):
+        # db_post = await self.get_by_id(id=id)
+        # if not db_post:
+        #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        query = self.model.delete().where(self.model.c.id == id)
+        await self.db.execute(query=query)
+        return None

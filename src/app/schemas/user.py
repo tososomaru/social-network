@@ -1,12 +1,10 @@
 from typing import Optional
 
-from pydantic import validator, EmailStr, constr
+from pydantic import validator
 from datetime import datetime
 from fastapi_users import models
 
-
-def convert_datetime_to_iso_8601(dt: datetime) -> str:
-    return dt.strftime('%Y-%m-%dT%H:%M:%S')
+from app.app.schemas.utils import convert_datetime_to_iso_8601
 
 
 class User(models.BaseUser):

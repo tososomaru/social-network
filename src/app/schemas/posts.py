@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from app.app.schemas.utils import convert_datetime_to_iso_8601
+
 
 class Reaction(str, Enum):
     NO_REACTION = 'NO_REACTION'
@@ -20,6 +22,10 @@ class PostBase(BaseModel):
     )
 
     class Config:
+        json_encoders = {
+            datetime: convert_datetime_to_iso_8601
+        }
+
         schema_extra = {
             'example': {
                 'text': 'It a example text',
@@ -28,7 +34,7 @@ class PostBase(BaseModel):
 
 
 class Post(PostBase):
-    id: UUID = Field(default_factory=uuid.uuid4)
+    id: UUID = Field(default_factory=uuid.uuid4, metadata=dict(title='id'))
     user_id: UUID
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -43,8 +49,15 @@ class Post(PostBase):
         schema_extra = {
             'example': {
                 **PostBase.Config.schema_extra.get('example'),
-                'id': '0',
-                'user_id': 'UUID4 user'
+                'id': uuid.uuid4(),
+                'user_id': uuid.uuid4(),
+                'created_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                'updated_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                'viewed': False,
+                'reaction': Reaction.NO_REACTION,
+                'count_views': 0,
+                'count_likes': 0,
+                'count_dislikes': 0
             }
         }
 
@@ -57,3 +70,12 @@ class PostUpdate(PostBase):
     text: str = Field(None, metadata=dict(title='Текст поста'))
     viewed: Optional[bool]
     reaction: Optional[Reaction]
+
+    class Config:
+        schema_extra = {
+            'example': {
+                **PostBase.Config.schema_extra.get('example'),
+                'viewed': False,
+                'reaction': Reaction.NO_REACTION,
+            }
+        }

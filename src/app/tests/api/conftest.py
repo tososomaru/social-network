@@ -3,8 +3,8 @@ from databases import Database
 from fastapi_pagination.ext import databases
 from sqlalchemy import create_engine
 
-from src.app.app import app
-from src.app.db.base import Base, get_database
+from app.main import app
+from app.app.db.base import Base, get_database
 from httpx import AsyncClient
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.sqlite3"
@@ -17,7 +17,8 @@ def database_fixture():
     )
     Base.metadata.create_all(bind=engine)
     database = databases.Database(SQLALCHEMY_DATABASE_URL)
-    return database
+    yield database
+    Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(name="client")
