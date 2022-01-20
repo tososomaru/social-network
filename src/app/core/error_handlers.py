@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
-from app.main import app
+from src.main import app
 
 
 @app.exception_handler(RequestValidationError)

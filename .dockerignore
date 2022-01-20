@@ -1,0 +1,7 @@
+.deta
+.pytest_cache
+__pycache__
+*.pyc
+.vscode
+.mypy_cache
+.DS_store

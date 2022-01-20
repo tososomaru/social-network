@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from pydantic import UUID4, BaseModel
 from starlette import status
 
-from app.app.db.base import Base
+from src.app.db.base import Base
 
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)

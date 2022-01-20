@@ -6,7 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from app.app.schemas.utils import convert_datetime_to_iso_8601
+from src.app.schemas.utils import convert_datetime_to_iso_8601
 
 
 class Reaction(str, Enum):

@@ -8,8 +8,9 @@ class Settings(BaseSettings):
     SERVER_HOST: str = '127.0.0.1'
     SERVER_PORT: int = 8000
 
-    SQLITE3_URL: str = 'sqlite:///./database.sqlite3'
-
+    POSTGRES_DB: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
     JWT_SECRET: str
     JWT_ALGORITHM: str = 'HS256'
     JWT_EXPIRATION: int = 3600
@@ -17,6 +18,11 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: str
     FIRST_SUPERUSER_LOGIN: str
     FIRST_SUPERUSER_PASSWORD: str
+    POSTGRES_DATABASE_URL: str = "postgresql+asyncpg://postgres:admin@localhost:5432/social-network-db"
+
+    def get_db_url(self) -> str:
+        # return "sqlite:///test.db"
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@postgres:5432/{self.POSTGRES_DB}"
 
 
 settings = Settings(

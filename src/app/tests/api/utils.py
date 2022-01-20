@@ -3,7 +3,7 @@ from typing import Dict
 from requests import Response
 from starlette.testclient import TestClient
 
-from app.app.core.settings import settings
+from src.app.core.settings import settings
 
 
 def register(client: TestClient) -> Response:

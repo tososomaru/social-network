@@ -21,8 +21,8 @@ async def get_posts(db: Database):
 
 async def create_posts(user_id: UUID4, post_data: PostCreate, db: Database):
     post = Post(id=uuid.uuid4(), user_id=user_id, **post_data.dict())
-    query = posts.insert().values(**post_data.dict(), user_id=user_id, id=post.id)
-    await db.execute(query)
+    query = posts.insert()
+    await db.execute(query, post.dict())
     return post.dict()
 
 

@@ -1,27 +1,27 @@
+from typing import List
+
 from databases import Database
 from fastapi import Depends, Response, status, HTTPException
 from pydantic import UUID4
-from sqlalchemy.orm import Session
 
-from app.app.db.base import get_database
-from app.app.schemas.user import User
-from app.app.schemas.posts import Post, PostCreate, PostUpdate
-from app.app.services import posts as service
+from src.app.db.base import get_database
+from src.app.schemas.user import User
+from src.app.schemas.posts import Post, PostCreate, PostUpdate
+from src.app.services import posts as service
 
 from fastapi_pagination import paginate, Page, Params
-from app.app.services.users import current_active_user
+from src.app.services.users import current_active_user
 
 from fastapi import APIRouter
 
 router = APIRouter()
 
 
-@router.get('/', response_model=Page[Post])
+@router.get('/', response_model=List[Post])
 async def get_posts(
-        params: Params = Depends(),
-        db: Database = Depends(get_database)
+    db: Database = Depends(get_database)
 ):
-    return paginate(await service.get_posts(db), params)
+    return await service.get_posts(db)
 
 
 @router.get('/{post_id}', response_model=Post)
@@ -31,7 +31,6 @@ async def get_post(
         db: Database = Depends(get_database)
 ):
     post = await service.get_post(user_id=user.id, post_id=post_id, db=db)
-    print(post)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -46,7 +45,7 @@ async def create_post(
         user: User = Depends(current_active_user),
         db: Database = Depends(get_database)
 ):
-    post = await service.create_posts(user_id=user.id, post_data=post_data, db=db)
+    post = await service.create_posts(user_id=user.id,post_data=post_data, db=db)
     return post
 
 

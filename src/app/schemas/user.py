@@ -4,13 +4,15 @@ from pydantic import validator
 from datetime import datetime
 from fastapi_users import models
 
-from app.app.schemas.utils import convert_datetime_to_iso_8601
+from src.app.schemas.utils import convert_datetime_to_iso_8601
 
 
 class User(models.BaseUser):
     username: str
     created_at: datetime = datetime.utcnow()
     updated_at: datetime = datetime.utcnow()
+
+    # TODO: добавить проверку на существующий логин в бд
 
     class Config:
         json_encoders = {
@@ -38,7 +40,6 @@ class UserCreate(models.BaseUserCreate):
 
 class UserUpdate(models.BaseUserUpdate):
     username: Optional[str]
-    pass
 
 
 class UserDB(User, models.BaseUserDB):

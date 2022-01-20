@@ -3,12 +3,12 @@ from databases import Database
 from fastapi_pagination.ext import databases
 from sqlalchemy import create_engine
 
-from app.main import app
-from app.app.db.base import Base, get_database
+from src.main import app
+from src.app.db.base import Base, get_database
 from httpx import AsyncClient
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.sqlite3"
-
+# database = Database(TEST_DATABASE_URL, force_rollback=True)
 
 @pytest.fixture(name="database")
 def database_fixture():

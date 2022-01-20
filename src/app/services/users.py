@@ -5,9 +5,9 @@ from fastapi_users import BaseUserManager, FastAPIUsers
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
-from app.app.core.settings import settings
-from app.app.models.users import get_user_db
-from app.app.schemas.user import UserCreate, UserDB, User, UserUpdate
+from src.app.core.settings import settings
+from src.app.models.user import get_user_db
+from src.app.schemas.user import UserCreate, UserDB, User, UserUpdate
 
 
 class UserManager(BaseUserManager[UserCreate, UserDB]):

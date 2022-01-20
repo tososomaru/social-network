@@ -1,18 +1,17 @@
 import databases
-from sqlalchemy import create_engine
+from databases import Database
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
-from sqlalchemy_utils import force_instant_defaults
 
-force_instant_defaults()
 from src.app.core.settings import settings
 
 Base: DeclarativeMeta = declarative_base()
-database = databases.Database(settings.SQLITE3_URL)
-
-engine = create_engine(
-    settings.SQLITE3_URL, connect_args={"check_same_thread": False}
-)
+database = databases.Database(url=settings.get_db_url(), min_size=2, max_size=15)
 
 
-def get_database():
-    return databases.Database(settings.SQLITE3_URL)
+def get_database() -> Database:
+    return database
+
+# engine = create_async_engine(
+#     settings.get_db_url(), connect_args={"check_same_thread": False}
+# )

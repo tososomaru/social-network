@@ -7,3 +7,7 @@
  ```bash
  uvicorn main:app --reload
  ```
+
+docker-compose up --build
+alembic revision --autogenerate -m "init"
+alembic upgrade head

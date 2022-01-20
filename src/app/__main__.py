@@ -1,6 +1,6 @@
 import uvicorn
 
-from app.app.core.settings import settings
+from src.app.core.settings import settings
 
 uvicorn.run(
     app='main:app',

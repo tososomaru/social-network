@@ -4,8 +4,8 @@ import pytest
 from databases import Database
 from httpx import AsyncClient, Response
 
-from app.app.models.post import posts
-from app.app.schemas.posts import Post
+from src.app.models.post import posts
+from src.app.schemas.posts import Post
 
 
 @pytest.fixture(name="register")
