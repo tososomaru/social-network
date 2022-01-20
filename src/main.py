@@ -9,7 +9,8 @@ from src.app.db.base import get_database, database
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    debug=True
 )
 
 
@@ -26,8 +27,6 @@ app.include_router(docs.router, tags=['docs'])
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(users.router, tags=['auth'])
 
-# Base.metadata.create_all(engine)
-
-app
-
 add_pagination(app)
+
+print('start')
