@@ -18,11 +18,16 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: str
     FIRST_SUPERUSER_LOGIN: str
     FIRST_SUPERUSER_PASSWORD: str
-    POSTGRES_DATABASE_URL: str = "postgresql+asyncpg://postgres:admin@localhost:5432/social-network-db"
+    HEROKU_POSTGRESQL_IVORY_URL: str
+    DATABASE_URL: str
 
     def get_db_url(self) -> str:
-        # return "sqlite:///test.db"
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@postgres:5432/{self.POSTGRES_DB}"
+        if self.HEROKU_POSTGRESQL_IVORY_URL and self.HEROKU_POSTGRESQL_IVORY_URL.startswith("postgres://"):
+            self.HEROKU_POSTGRESQL_IVORY_URL = self.HEROKU_POSTGRESQL_IVORY_URL.replace(
+                "postgres://", "postgresql+asyncpg://", 1
+            )
+
+        return self.HEROKU_POSTGRESQL_IVORY_URL
 
 
 settings = Settings(
