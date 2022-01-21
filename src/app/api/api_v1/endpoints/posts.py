@@ -30,12 +30,14 @@ async def get_post(
         user: User = Depends(current_active_user),
         db: Database = Depends(get_database)
 ):
+    print(user.id)
     post = await service.get_post(user_id=user.id, post_id=post_id, db=db)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=post_id
         )
+    print(post)
     return post
 
 
