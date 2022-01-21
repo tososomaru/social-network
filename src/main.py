@@ -3,9 +3,11 @@ from fastapi_pagination import add_pagination
 
 from src.app.api.api_v1.api import api_router
 from src.app.api import docs
-from src.app.core.settings import settings
+from src.app.core.config import get_settings
 from src.app.api.api_v1.endpoints import users
-from src.app.db.base import get_database, database
+from src.app.db.base import database
+
+settings = get_settings()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -28,5 +30,3 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(users.router, tags=['auth'])
 
 add_pagination(app)
-
-print('start')

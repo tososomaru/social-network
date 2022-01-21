@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from alembic import context
 
 sys.path = ['', '..'] + sys.path[1:]
-from src.app.core.settings import settings
+from src.app.core.config import get_settings
 from src.app.db.base import Base
 from src.app.models import user, post, profile
 
@@ -19,7 +19,7 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline():
-    url = config.get_main_option(settings.get_db_url())
+    url = config.get_main_option(get_settings.get_db_url())
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -40,7 +40,7 @@ def do_run_migrations(connection):
 
 async def run_migrations_online():
     config_section = config.get_section(config.config_ini_section)
-    config_section['sqlalchemy.url'] = settings.get_db_url()
+    config_section['sqlalchemy.url'] = get_settings().get_db_url()
     connectable = AsyncEngine(
         engine_from_config(
             config_section,

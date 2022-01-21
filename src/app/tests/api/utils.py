@@ -1,12 +1,17 @@
 from typing import Dict
 
+from fastapi import Depends
 from requests import Response
 from starlette.testclient import TestClient
 
-from src.app.core.settings import settings
+from src.app.core.config import get_settings
+from src.app.core.settings.app import AppSettings
 
 
-def register(client: TestClient) -> Response:
+def register(
+        client: TestClient,
+        settings: AppSettings = Depends(get_settings)
+) -> Response:
     data = {
         'email': settings.FIRST_SUPERUSER_EMAIL,
         'username': settings.FIRST_SUPERUSER_LOGIN,
@@ -21,7 +26,10 @@ def register(client: TestClient) -> Response:
     return r
 
 
-def login(client: TestClient) -> Response:
+def login(
+        client: TestClient,
+        settings: AppSettings = Depends(get_settings)
+) -> Response:
     login_data = {
         "username": settings.FIRST_SUPERUSER_LOGIN,
         "password": settings.FIRST_SUPERUSER_PASSWORD,

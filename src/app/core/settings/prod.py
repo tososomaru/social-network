@@ -1,4 +1,4 @@
-from src.app.core.settings.base import AppSettings
+from src.app.core.settings.app import AppSettings
 
 
 class ProdAppSettings(AppSettings):
