@@ -16,5 +16,15 @@ class AppSettings(BaseSettings):
     FIRST_SUPERUSER_LOGIN: str
     FIRST_SUPERUSER_PASSWORD: str
 
+    def get_db_url(self):
+        pass
+
+    @property
+    def database_kwargs(self):
+        return {
+            "min_size": 2,
+            "max_size": 15
+        }
+
     class Config:
         env_file = ".env"

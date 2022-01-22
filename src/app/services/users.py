@@ -6,7 +6,7 @@ from fastapi_users.authentication import JWTAuthentication
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
 from src.app.core.config import get_settings
-from src.app.models.user import get_user_db
+from src.app.db.database import get_user_db
 from src.app.schemas.user import UserCreate, UserDB, User, UserUpdate
 
 settings = get_settings()

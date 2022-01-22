@@ -1,32 +1,33 @@
 from fastapi import FastAPI
-from fastapi_pagination import add_pagination
 
 from src.app.api.api_v1.api import api_router
 from src.app.api import docs
 from src.app.core.config import get_settings
 from src.app.api.api_v1.endpoints import users
-from src.app.db.base import database
-
-settings = get_settings()
-
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    debug=True
-)
+from src.app.db.database import database
 
 
-@app.on_event("startup")
-async def startup():
-    await database.connect()
+def get_application() -> FastAPI:
+    settings = get_settings()
+    application = FastAPI(
+        title=settings.PROJECT_NAME,
+        openapi_url=f"{settings.API_V1_STR}/openapi.json",
+        debug=True
+    )
+
+    @application.on_event("startup")
+    async def startup():
+        await database.connect()
+
+    @application.on_event("shutdown")
+    async def shutdown():
+        await database.disconnect()
+
+    application.include_router(docs.router, tags=['docs'])
+    application.include_router(users.router, tags=['auth'])
+    application.include_router(api_router, prefix=settings.API_V1_STR)
+
+    return application
 
 
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
-
-app.include_router(docs.router, tags=['docs'])
-app.include_router(api_router, prefix=settings.API_V1_STR)
-app.include_router(users.router, tags=['auth'])
-
-add_pagination(app)
+app = get_application()

@@ -1,12 +1,7 @@
-import uuid
-
-
 import sqlalchemy as sa
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from sqlalchemy.dialects.postgresql import UUID
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
-from src.app.db.base import Base, get_database
-from src.app.schemas.user import UserDB
+from src.app.db.base import Base
 
 
 class ModelUser(Base, SQLAlchemyBaseUserTable):
@@ -17,7 +12,3 @@ class ModelUser(Base, SQLAlchemyBaseUserTable):
 
 
 users = ModelUser.__table__
-
-
-async def get_user_db():
-    yield SQLAlchemyUserDatabase(UserDB, get_database(), users)
