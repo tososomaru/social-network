@@ -1,11 +1,13 @@
-import uuid
-
 import pytest
 from databases import Database
 from httpx import AsyncClient, Response
 
 from src.app.models.post import posts
 from src.app.schemas.posts import Post
+from src.app.schemas.utils import create_uuid_without_leading_zeros
+
+
+uuid = create_uuid_without_leading_zeros
 
 
 def create_headers_with_token_from_content(response: Response):
@@ -31,7 +33,7 @@ async def test_get_posts(database: Database, client: AsyncClient):
     data = {
         "text": "It a example text2"
     }
-    post = Post(id=uuid.uuid4(), user_id=uuid.uuid4(), **data)
+    post = Post(id=uuid(), user_id=uuid(), **data)
     query = posts.insert().values(**data, user_id=post.user_id, id=post.id)
     await database.execute(query)
     async with client as c:
@@ -46,10 +48,9 @@ async def test_get_post_by_id(database: Database, client: AsyncClient, login):
     data = {
         "text": "It a example text"
     }
-    post = Post(id=uuid.uuid4(), user_id=uuid.uuid4(), **data)
+    post = Post(id=uuid(), user_id=uuid(), **data)
     query = posts.insert().values(**data, user_id=post.user_id, id=post.id)
     await database.execute(query)
-
     async with client as c:
         response = await c.get(f"api/v1/posts/{post.id}", headers=headers)
 
@@ -64,10 +65,9 @@ async def test_delete_post(database: Database, client: AsyncClient, login):
     data = {
         "text": "It a example text"
     }
-    post = Post(id=uuid.uuid4(), user_id=uuid.uuid4(), **data)
+    post = Post(id=uuid(), user_id=uuid(), **data)
     query = posts.insert().values(**data, user_id=post.user_id, id=post.id)
     await database.execute(query)
-
     async with client as c:
         response = await c.delete(f"api/v1/posts/{post.id}", headers=headers)
 
@@ -80,14 +80,13 @@ async def test_update_post(database: Database, client: AsyncClient, login):
     data = {
         "text": "It a example text"
     }
-    post = Post(id=uuid.uuid4(), user_id=uuid.uuid4(), **data)
+    post = Post(id=uuid(), user_id=uuid(), **data)
     query = posts.insert().values(**data, user_id=post.user_id, id=post.id)
     await database.execute(query)
 
     data = {
         "text": "patch"
     }
-
     async with client as c:
         response = await c.patch(f"api/v1/posts/{post.id}", headers=headers, json=data)
 

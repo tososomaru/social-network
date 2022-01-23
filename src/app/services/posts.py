@@ -12,12 +12,12 @@ from ..models.post import posts
 async def get_post(user_id: UUID4, post_id: UUID4, db: Database) -> Post:
     query = posts.select().where(posts.c.id == post_id and posts.c.user_id == user_id)
     post_record = await db.fetch_one(query=query)
-    return Post(**post_record._mapping)
+    return post_record._mapping
 
 
 async def get_posts(db: Database):
     posts_records = await db.fetch_all(query=posts.select())
-    return [Post(**post._mapping) for post in posts_records]
+    return [post._mapping for post in posts_records]
 
 
 async def create_posts(user_id: UUID4, post_data: PostCreate, db: Database):

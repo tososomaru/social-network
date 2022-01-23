@@ -43,7 +43,7 @@ async def create_post(
         user: User = Depends(current_active_user),
         db: Database = Depends(get_database)
 ):
-    post = await service.create_posts(user_id=user.id,post_data=post_data, db=db)
+    post = await service.create_posts(user_id=user.id, post_data=post_data, db=db)
     return post
 
 

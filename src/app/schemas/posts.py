@@ -6,6 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from src.app.schemas.base import IdSchemaMixin, TimeStampSchemaMixin
 from src.app.schemas.utils import convert_datetime_to_iso_8601
 
 
@@ -33,11 +34,8 @@ class PostBase(BaseModel):
         }
 
 
-class Post(PostBase):
-    id: UUID = Field(default_factory=uuid.uuid4, metadata=dict(title='id'))
+class Post(PostBase, IdSchemaMixin, TimeStampSchemaMixin):
     user_id: UUID
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
     viewed: bool = Field(False)
     reaction: Reaction = Field(Reaction.NO_REACTION)
     count_views: int = Field(0)
